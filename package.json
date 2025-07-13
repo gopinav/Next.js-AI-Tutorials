@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.0-beta.5",
     "@ai-sdk/openai": "^2.0.0-beta.7",
     "@ai-sdk/react": "^2.0.0-beta.15",
     "ai": "^5.0.0-beta.15",
