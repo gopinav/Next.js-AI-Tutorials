@@ -21,15 +21,20 @@ export default function CompletionPage() {
         body: JSON.stringify({ prompt }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        throw new Error(data.error || "Something went wrong");
       }
 
-      const data = await response.json();
       setCompletion(data.text);
     } catch (error) {
       console.error("Error:", error);
-      setError("Something went wrong. Please try again.");
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -37,11 +42,7 @@ export default function CompletionPage() {
 
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {error && (
-        <div className="text-red-500 mb-4">
-          Something went wrong. Please try again.
-        </div>
-      )}
+      {error && <div className="text-red-500 mb-4">{error}</div>}
       {isLoading ? (
         <div>Loading...</div>
       ) : completion ? (
