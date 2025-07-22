@@ -1,4 +1,3 @@
-// app/api/chat/route.ts
 import { streamText, UIMessage, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
 

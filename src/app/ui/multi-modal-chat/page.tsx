@@ -1,5 +1,3 @@
-// Updated version
-
 "use client";
 
 import { useState, useRef } from "react";
