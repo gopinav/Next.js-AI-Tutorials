@@ -1,4 +1,3 @@
-// src/app/api/transcribe-audio/route.ts
 import { openai } from "@ai-sdk/openai";
 import { experimental_transcribe as transcribe } from "ai";
 

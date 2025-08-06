@@ -1,4 +1,3 @@
-// src/app/ui/transcribe-audio/page.tsx
 "use client";
 
 import { useState, useRef } from "react";
