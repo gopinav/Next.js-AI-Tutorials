@@ -13,14 +13,22 @@ export default function TranscribeAudioPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<TranscriptResult | null>(null);
-  const [fileName, setFileName] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setTranscript(null);
+      setError(null);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const fileInput = fileInputRef.current;
-    if (!fileInput?.files?.[0]) {
+    if (!selectedFile) {
       setError("Please select an audio file");
       return;
     }
@@ -30,7 +38,7 @@ export default function TranscribeAudioPage() {
 
     try {
       const formData = new FormData();
-      formData.append("audio", fileInput.files[0]);
+      formData.append("audio", selectedFile);
 
       const response = await fetch("/api/transcribe-audio", {
         method: "POST",
@@ -43,6 +51,10 @@ export default function TranscribeAudioPage() {
 
       const data = await response.json();
       setTranscript(data);
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Error transcribing audio:", error);
       setError(
@@ -55,17 +67,8 @@ export default function TranscribeAudioPage() {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      setTranscript(null);
-      setError(null);
-    }
-  };
-
   const resetForm = () => {
-    setFileName("");
+    setSelectedFile(null);
     setTranscript(null);
     setError(null);
     if (fileInputRef.current) {
@@ -105,9 +108,9 @@ export default function TranscribeAudioPage() {
         className="fixed bottom-0 w-full max-w-md mx-auto left-0 right-0 p-4 bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 shadow-lg"
       >
         <div className="flex flex-col gap-2">
-          {fileName && (
+          {selectedFile && (
             <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-              <span>Selected: {fileName}</span>
+              <span>Selected: {selectedFile.name}</span>
               <button
                 type="button"
                 onClick={resetForm}
@@ -131,11 +134,11 @@ export default function TranscribeAudioPage() {
               htmlFor="audio-upload"
               className="flex-1 dark:bg-zinc-800 p-2 border border-zinc-300 dark:border-zinc-700 rounded shadow-xl cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 text-center"
             >
-              {fileName ? "Change file" : "Select audio file"}
+              {selectedFile ? "Change file" : "Select audio file"}
             </label>
             <button
               type="submit"
-              disabled={isLoading || !fileName}
+              disabled={isLoading || !selectedFile}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Transcribe
