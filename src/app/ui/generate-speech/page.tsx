@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-export default function GenerateAudioPage() {
+export default function GenerateSpeechPage() {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
-    null
-  );
+  const [hasAudio, setHasAudio] = useState(false);
+
+  const audioUrlRef = useRef<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -16,6 +17,17 @@ export default function GenerateAudioPage() {
     setIsLoading(true);
     setError(null);
     setText("");
+
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
 
     try {
       const response = await fetch("/api/generate-speech", {
@@ -28,18 +40,12 @@ export default function GenerateAudioPage() {
         throw new Error("Failed to generate audio");
       }
 
-      // Get the audio data as a blob directly
       const blob = await response.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      const audio = new Audio(audioUrl);
+      audioUrlRef.current = URL.createObjectURL(blob);
+      audioRef.current = new Audio(audioUrlRef.current);
 
-      // Store the audio element
-      setCurrentAudio(audio);
-
-      // Play the audio
-      audio.play();
-
-      // Don't clean up immediately - let user replay
+      setHasAudio(true);
+      audioRef.current.play();
     } catch (error) {
       console.error("Error generating audio:", error);
       setError(
@@ -47,17 +53,31 @@ export default function GenerateAudioPage() {
           ? error.message
           : "Something went wrong. Please try again."
       );
+      setHasAudio(false);
     } finally {
       setIsLoading(false);
     }
   };
 
   const replayAudio = () => {
-    if (currentAudio) {
-      currentAudio.currentTime = 0;
-      currentAudio.play();
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (audioUrlRef.current) {
+        URL.revokeObjectURL(audioUrlRef.current);
+      }
+
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
@@ -65,7 +85,7 @@ export default function GenerateAudioPage() {
 
       {isLoading && <div className="text-center mb-4">Generating audio...</div>}
 
-      {currentAudio && !isLoading && (
+      {hasAudio && !isLoading && (
         <button
           onClick={replayAudio}
           className="mb-4 bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
