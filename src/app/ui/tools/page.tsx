@@ -144,7 +144,7 @@ export default function ChatPage() {
   );
 }
 
-// Replace the messages rendering with below for tool call history in the UI
+// Replace the messages rendering with below for all tool call states in the UI
 
 // {messages.map((message) => (
 //   <div key={message.id} className="mb-4">
