@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     console.log({ dish });
 
     const result = streamObject({
-      model: openai("gpt-4.1-nano"),
+      model: openai("gpt-5-nano"),
       schema: recipeSchema,
       prompt: `Generate a recipe for ${dish}`,
     });

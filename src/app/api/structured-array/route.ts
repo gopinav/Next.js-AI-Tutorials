@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const { type } = await req.json();
 
     const result = streamObject({
-      model: openai("gpt-4.1-nano"),
+      model: openai("gpt-5-nano"),
       output: "array",
       schema: pokemonSchema,
       prompt: `Generate a list of 5 ${type} type pokemon`,

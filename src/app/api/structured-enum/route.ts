@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const { text } = await req.json();
 
     const result = await generateObject({
-      model: openai("gpt-4.1-mini"), // gpt-4.1-mini supports enum better than gpt-4.1-nano
+      model: openai("gpt-5-mini"), // gpt-5-mini supports enum better
       output: "enum",
       enum: ["positive", "negative", "neutral"],
       prompt: `Classify the sentiment in this text: "${text}"`,
