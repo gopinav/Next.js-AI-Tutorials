@@ -47,14 +47,19 @@ export type ChatTools = InferUITools<typeof tools>;
 export type ChatMessage = UIMessage<never, UIDataTypes, ChatTools>;
 
 export async function POST(req: Request) {
-  const { messages }: { messages: ChatMessage[] } = await req.json();
+  try {
+    const { messages }: { messages: ChatMessage[] } = await req.json();
 
-  const result = streamText({
-    model: openai("gpt-5-mini"),
-    messages: convertToModelMessages(messages),
-    stopWhen: stepCountIs(3),
-    tools,
-  });
+    const result = streamText({
+      model: openai("gpt-5-mini"),
+      messages: convertToModelMessages(messages),
+      stopWhen: stepCountIs(3),
+      tools,
+    });
 
-  return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error("Error streaming chat completion:", error);
+    return new Response("Failed to stream chat completion", { status: 500 });
+  }
 }
