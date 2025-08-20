@@ -69,6 +69,7 @@ export default function MultiModalChatPage() {
                     />
                   );
                 }
+                return null;
               default:
                 return null;
             }
