@@ -70,68 +70,67 @@ export default function GenerateImageToolPage() {
                     />
                   );
                 }
+                return null;
               case "tool-generateImage":
-                if (part.type === "tool-generateImage") {
-                  switch (part.state) {
-                    case "input-streaming":
-                      return (
-                        <div
-                          key={`${message.id}-getWeather-${index}`}
-                          className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
-                        >
-                          <div className="text-sm text-zinc-500">
-                            Receiving image generation request...
-                          </div>
-                          <pre className="text-xs text-zinc-600 mt-1">
-                            {JSON.stringify(part.input, null, 2)}
-                          </pre>
+                switch (part.state) {
+                  case "input-streaming":
+                    return (
+                      <div
+                        key={`${message.id}-getWeather-${index}`}
+                        className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
+                      >
+                        <div className="text-sm text-zinc-500">
+                          Receiving image generation request...
                         </div>
-                      );
+                        <pre className="text-xs text-zinc-600 mt-1">
+                          {JSON.stringify(part.input, null, 2)}
+                        </pre>
+                      </div>
+                    );
 
-                    case "input-available":
-                      return (
-                        <div
-                          key={`${message.id}-getWeather-${index}`}
-                          className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
-                        >
-                          <div className="text-sm text-zinc-400">
-                            Generating image for: {part.input.prompt}
-                          </div>
+                  case "input-available":
+                    return (
+                      <div
+                        key={`${message.id}-getWeather-${index}`}
+                        className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
+                      >
+                        <div className="text-sm text-zinc-400">
+                          Generating image for: {part.input.prompt}
                         </div>
-                      );
+                      </div>
+                    );
 
-                    case "output-available":
-                      return (
-                        <div
-                          key={`${message.id}-getWeather-${index}`}
-                          className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
-                        >
-                          <div>
-                            <Image
-                              src={`data:image/png;base64,${part.output}`}
-                              alt="Generated image"
-                              width={500}
-                              height={500}
-                            />
-                          </div>
+                  case "output-available":
+                    return (
+                      <div
+                        key={`${message.id}-getWeather-${index}`}
+                        className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
+                      >
+                        <div>
+                          <Image
+                            src={`data:image/png;base64,${part.output}`}
+                            alt="Generated image"
+                            width={500}
+                            height={500}
+                          />
                         </div>
-                      );
+                      </div>
+                    );
 
-                    case "output-error":
-                      return (
-                        <div
-                          key={`${message.id}-getWeather-${index}`}
-                          className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
-                        >
-                          <div className="text-sm text-red-400">
-                            Error: {part.errorText}
-                          </div>
+                  case "output-error":
+                    return (
+                      <div
+                        key={`${message.id}-getWeather-${index}`}
+                        className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
+                      >
+                        <div className="text-sm text-red-400">
+                          Error: {part.errorText}
                         </div>
-                      );
+                      </div>
+                    );
 
-                    default:
-                      return null;
-                  }
+                  default:
+                    return null;
                 }
               default:
                 return null;
