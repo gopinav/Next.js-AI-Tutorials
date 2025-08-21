@@ -30,13 +30,13 @@ export default function ClientSideToolsPage() {
       }),
       sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
       async onToolCall({ toolCall }) {
+        if (toolCall.dynamic) {
+          return;
+        }
         switch (toolCall.toolName) {
           case "changeBackground":
             {
-              const { imageUrl, backgroundPrompt } = toolCall.input as {
-                imageUrl: string;
-                backgroundPrompt: string;
-              };
+              const { imageUrl, backgroundPrompt } = toolCall.input;
 
               const transformation = `e-changebg-prompt-${backgroundPrompt}`;
               const transformedUrl = buildTransformationUrl(
@@ -53,9 +53,7 @@ export default function ClientSideToolsPage() {
             break;
           case "removeBackground":
             {
-              const { imageUrl } = toolCall.input as {
-                imageUrl: string;
-              };
+              const { imageUrl } = toolCall.input;
 
               const transformation = `e-removebg`;
               const transformedUrl = buildTransformationUrl(
