@@ -127,7 +127,7 @@ export default function ClientSideToolsPage() {
                     />
                   );
                 }
-                break;
+                return null;
               case "tool-generateImage":
                 switch (part.state) {
                   case "input-streaming":
