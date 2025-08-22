@@ -5,7 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { ChatMessage } from "@/app/api/tools/route";
 
-export default function ChatPage() {
+export default function ToolsChatPage() {
   const [input, setInput] = useState("");
 
   const { messages, sendMessage, status, error, stop } = useChat<ChatMessage>({
