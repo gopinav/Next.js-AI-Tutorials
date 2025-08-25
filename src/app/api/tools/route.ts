@@ -17,13 +17,10 @@ const tools = {
       city: z.string().describe("The city to get the weather for"),
     }),
     execute: async ({ city }) => {
-      if (city === "Gotham City") {
-        return "70°F and cloudy";
-      } else if (city === "Metropolis") {
-        return "80°F and sunny";
-      } else {
-        return "Unknown";
-      }
+      const url = `https://wttr.in/${city.toLowerCase()}?format=%C+%t`;
+      const response = await fetch(url);
+      const data = await response.text();
+      return data;
     },
   }),
 };
