@@ -52,7 +52,7 @@ export default function WebSearchToolPage() {
                               className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm underline truncate"
                               title={part.url}
                             >
-                              {part.url}
+                              {part.title || part.url}
                             </a>
                           );
                         }
