@@ -35,7 +35,7 @@ const tools = {
         value: [
           {
             type: "text",
-            text: "generate image in base64",
+            text: "generated image in base64",
           },
         ],
       };
