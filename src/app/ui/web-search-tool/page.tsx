@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
@@ -23,7 +24,6 @@ export default function WebSearchToolPage() {
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       {error && <div className="text-red-500 mb-4">{error.message}</div>}
-
       {messages.map((message) => {
         const sources = message.parts.filter(
           (part) => part.type === "source-url"
@@ -31,38 +31,6 @@ export default function WebSearchToolPage() {
 
         return (
           <div key={message.id} className="mb-4">
-            {message.role === "assistant" && (
-              <div className="mb-3">
-                {sources.length > 0 && (
-                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">
-                        Sources ({sources.length})
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {sources.map((part, i) => {
-                        if (part.type === "source-url") {
-                          return (
-                            <a
-                              key={`${message.id}-${i}`}
-                              href={part.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm underline truncate"
-                              title={part.url}
-                            >
-                              {part.title || part.url}
-                            </a>
-                          );
-                        }
-                        return null;
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
             <div className="font-semibold">
               {message.role === "user" ? "You:" : "AI:"}
             </div>
@@ -77,63 +45,86 @@ export default function WebSearchToolPage() {
                       {part.text}
                     </div>
                   );
-                // case "tool-web_search":
-                case "tool-web_search_preview":
+                // case "tool-web_search_preview":
+                case "tool-web_search":
                   switch (part.state) {
                     case "input-streaming":
                       return (
                         <div
-                          key={`${message.id}-getWeather-${index}`}
+                          key={`${message.id}-web_search-${index}`}
                           className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
                         >
                           <div className="text-sm text-zinc-500">
-                            Preparing to search...
+                            🔍 Preparing to search...
                           </div>
-                          <pre className="text-xs text-zinc-600 mt-1">
-                            {JSON.stringify(part.input, null, 2)}
-                          </pre>
                         </div>
                       );
-
                     case "input-available":
                       return (
                         <div
-                          key={`${message.id}-getWeather-${index}`}
+                          key={`${message.id}-web_search-${index}`}
                           className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
                         >
                           <div className="text-sm text-zinc-400">
-                            Searching the web...
+                            🔍 Searching the web...
                           </div>
                         </div>
                       );
-
                     case "output-available":
                       return (
-                        <div
-                          key={`${message.id}-getWeather-${index}`}
-                          className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
+                        <React.Fragment
+                          key={`${message.id}-web_search-${index}`}
                         >
-                          <div className="text-sm text-zinc-400">
-                            Web search complete{" "}
-                            {sources.length > 0
-                              ? `(${sources.length} sources found)`
-                              : ""}
+                          <div className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2">
+                            <div className="text-sm text-zinc-400">
+                              ✅ Web search complete
+                            </div>
                           </div>
-                        </div>
-                      );
 
+                          {message.role === "assistant" &&
+                            sources.length > 0 && (
+                              <div className="mb-2">
+                                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">
+                                      Sources ({sources.length})
+                                    </span>
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    {sources.map((part, i) => {
+                                      if (part.type === "source-url") {
+                                        return (
+                                          <a
+                                            key={`${message.id}-${i}`}
+                                            href={part.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm underline truncate"
+                                            title={part.url}
+                                          >
+                                            {part.title || part.url}
+                                          </a>
+                                        );
+                                      }
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                        </React.Fragment>
+                      );
                     case "output-error":
                       return (
                         <div
-                          key={`${message.id}-getWeather-${index}`}
+                          key={`${message.id}-web_search-${index}`}
                           className="bg-zinc-800/50 border border-zinc-700 p-2 rounded mt-1 mb-2"
                         >
                           <div className="text-sm text-red-400">
-                            Web search failed: {part.errorText}
+                            ❌ Web search failed: {part.errorText}
                           </div>
                         </div>
                       );
-
                     default:
                       return null;
                   }
@@ -144,6 +135,7 @@ export default function WebSearchToolPage() {
           </div>
         );
       })}
+
       {(status === "submitted" || status === "streaming") && (
         <div className="mb-4">
           <div className="flex items-center gap-2">
@@ -159,9 +151,9 @@ export default function WebSearchToolPage() {
         <div className="flex gap-2">
           <input
             className="flex-1 dark:bg-zinc-800 p-2 border border-zinc-300 dark:border-zinc-700 rounded shadow-xl"
+            placeholder="How can I help you?"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="How can I help you?"
           />
           {status === "submitted" || status === "streaming" ? (
             <button
