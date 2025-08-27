@@ -26,8 +26,19 @@ const tools = {
           openai: { style: "vivid", quality: "hd" },
         },
       });
-
       return image.base64;
+    },
+    toModelOutput: () => {
+      // Returning base64 image will exceed the context window of the model. Return a placeholder text instead.
+      return {
+        type: "content",
+        value: [
+          {
+            type: "text",
+            text: "generate image in base64",
+          },
+        ],
+      };
     },
   }),
 };
@@ -40,10 +51,10 @@ export async function POST(req: Request) {
     const { messages }: { messages: ChatMessage[] } = await req.json();
 
     const result = streamText({
-      model: openai("gpt-5-nano"),
+      model: openai("gpt-5-mini"),
       messages: convertToModelMessages(messages),
       tools,
-      stopWhen: stepCountIs(3),
+      stopWhen: stepCountIs(2),
     });
 
     return result.toUIMessageStreamResponse();
