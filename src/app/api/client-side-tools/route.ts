@@ -17,14 +17,14 @@ import ImageKit from "imagekit";
 
 const uploadImage = async (image: string) => {
   const imagekit = new ImageKit({
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY as string,
+    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY as string,
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY as string,
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT as string,
+    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT as string,
   });
 
   const response = await imagekit.upload({
     file: image, // File content to upload
-    fileName: "my_file_name.jpg", // Desired file name
+    fileName: "generated_image.jpg", // Desired file name
   });
 
   return response.url;

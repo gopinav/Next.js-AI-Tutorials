@@ -164,7 +164,7 @@ export default function ClientSideToolsPage() {
                         <div>
                           <Image
                             urlEndpoint={
-                              "https://ik.imagekit.io/codevolutionbus/"
+                              process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
                             }
                             src={`${part.output}`}
                             alt="Generated image"
