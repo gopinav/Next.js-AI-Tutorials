@@ -55,7 +55,7 @@ export default function ClientSideToolsPage() {
             {
               const { imageUrl } = toolCall.input;
 
-              const transformation = `e-removebg`;
+              const transformation = `e-bgremove`;
               const transformedUrl = buildTransformationUrl(
                 imageUrl,
                 transformation
